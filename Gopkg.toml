@@ -26,3 +26,7 @@
 [[override]]
   name = "github.com/Sirupsen/logrus"
   source = "github.com/sirupsen/logrus"
+
+[[override]]
+  name ="github.com/cilium/cilium"
+  branch = "master"

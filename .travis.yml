@@ -12,7 +12,7 @@
     fast_finish: true
   before_install:
     - sudo apt-get -qq update
-    - sudo apt-get install -y linux-headers
+    - sudo apt-get install -y linux-headers-$(uname -r)
   install:
     - go get github.com/golang/lint/golint
     - go get honnef.co/go/tools/cmd/staticcheck

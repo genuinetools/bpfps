@@ -36,7 +36,7 @@
     "pkg/pipeexec",
     "pkg/syncbytes"
   ]
-  revision = "b53924e9a62b14ef7d7c0fdc529fb7bc6325f71a"
+  revision = "54de2c56054f4197b5ce6b6493ee708afeb33884"
   source = "github.com/jessfraz/cilium"
 
 [[projects]]

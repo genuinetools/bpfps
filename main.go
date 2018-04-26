@@ -98,10 +98,12 @@ func main() {
 func getProgInfos() []bpf.ProgInfo {
 	var (
 		bid   uint32
+		err   error
 		infos = []bpf.ProgInfo{}
 	)
 	for {
-		if err := bpf.GetProgNextID(bid, &bid); err != nil {
+		bid, err = bpf.GetProgNextID(bid)
+		if err != nil {
 			if !strings.Contains(err.Error(), "no such file or directory") {
 				logrus.Warn(err)
 			}
@@ -117,7 +119,7 @@ func getProgInfos() []bpf.ProgInfo {
 		}
 
 		// Get the object's info.
-		info, err := bpf.GetObjInfoByFD(fd)
+		info, err := bpf.GetProgInfoByFD(fd)
 		if err != nil {
 			logrus.Warn(err)
 			continue

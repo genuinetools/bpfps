@@ -111,20 +111,18 @@ type attrObjInfo struct {
 	info    uint64
 }
 
-// GetProgNextID takes a current program ID and a pointer to the next program ID
-// and fills the next program ID.
-func GetProgNextID(current uint32, next *uint32) error {
+// GetProgNextID takes a current program ID and returns the next program ID.
+func GetProgNextID(current uint32) (uint32, error) {
 	attr := attrProg{
 		progID: current,
 	}
 
 	ret, _, err := unix.Syscall(unix.SYS_BPF, BPF_PROG_GET_NEXT_ID, uintptr(unsafe.Pointer(&attr)), unsafe.Sizeof(attr))
 	if ret != 0 || err != 0 {
-		return fmt.Errorf("Unable to get next id: %v", err)
+		return 0, fmt.Errorf("Unable to get next id: %v", err)
 	}
-	*next = attr.nextID
 
-	return nil
+	return attr.nextID, nil
 }
 
 // GetProgFDByID returns the file descriptor for the program id.
@@ -141,8 +139,8 @@ func GetProgFDByID(id uint32) (int, error) {
 	return int(fd), nil
 }
 
-// GetObjInfoByFD gets the bpf program info from it's file descriptor.
-func GetObjInfoByFD(fd int) (ProgInfo, error) {
+// GetProgInfoByFD gets the bpf program info from its file descriptor.
+func GetProgInfoByFD(fd int) (ProgInfo, error) {
 	info := ProgInfo{}
 	attrInfo := attrObjInfo{
 		bpfFD:   uint32(fd),

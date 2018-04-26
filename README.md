@@ -4,6 +4,9 @@
 
 A tool to list and diagnose bpf programs. (Who watchs the watchers..? :)
 
+Shoutout to [cilium's](https://github.com/cilium/cilium) 
+[golang bpf package](https://godoc.org/github.com/cilium/cilium/pkg/bpf) for doing a lot of heavy lifting here.
+
 ## Installation
 
 #### Binaries

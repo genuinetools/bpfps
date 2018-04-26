@@ -7,7 +7,7 @@ ENV GOPATH /go
 RUN	apk add --no-cache \
 	ca-certificates
 
-COPY . /go/src/github.com/jessfraz/bpfps
+COPY . /go/src/github.com/genuinetools/bpfps
 
 RUN set -x \
 	&& apk add --no-cache --virtual .build-deps \
@@ -17,7 +17,7 @@ RUN set -x \
 		libgcc \
 		linux-headers \
 		make \
-	&& cd /go/src/github.com/jessfraz/bpfps \
+	&& cd /go/src/github.com/genuinetools/bpfps \
 	&& make static \
 	&& mv bpfps /usr/bin/bpfps \
 	&& apk del .build-deps \

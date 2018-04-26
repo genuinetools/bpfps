@@ -11,7 +11,7 @@ import (
 	"time"
 
 	"github.com/cilium/cilium/pkg/bpf"
-	"github.com/jessfraz/bpfps/version"
+	"github.com/genuinetools/bpfps/version"
 	"github.com/sirupsen/logrus"
 )
 

@@ -11,7 +11,7 @@ Shoutout to [cilium's](https://github.com/cilium/cilium)
 
 #### Binaries
 
-- **linux** [amd64](https://github.com/genuinetools/bpfps/releases/download/v0.0.0/bpfps-linux-amd64) 
+- **linux** [amd64](https://github.com/genuinetools/bpfps/releases/download/v0.1.0/bpfps-linux-amd64) 
 
 #### Via Go
 
@@ -31,7 +31,7 @@ $ bpfps -h
       |_|       |_|
 
  A tool to list and diagnose bpf programs.  (Who watchs the watchers..? :)
- Version: v0.0.0
+ Version: v0.1.0
  Build: be7363d
 
   -d    run in debug mode

@@ -12,7 +12,7 @@
     fast_finish: true
   before_install:
     - sudo apt-get -qq update
-    - sudo apt-get install -y linux-headers-$(uname -r)
+    - sudo apt-get install -y linux-headers-$(uname -r) linux-libc-dev
   install:
     - go get github.com/golang/lint/golint
     - go get honnef.co/go/tools/cmd/staticcheck

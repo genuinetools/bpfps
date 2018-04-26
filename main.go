@@ -24,7 +24,7 @@ const (
 |_.__/| .__/|_| | .__/|___/
       |_|       |_|
 
- A tool to list and diagnose bpf programs.  (Who watchs the watchers..? :)
+ A tool to list and diagnose bpf programs.  (Who watches the watchers..? :)
  Version: %s
  Build: %s
 

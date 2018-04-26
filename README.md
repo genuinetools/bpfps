@@ -1,6 +1,6 @@
 # bpfps
 
-[![Travis CI](https://travis-ci.org/jessfraz/bpfps.svg?branch=master)](https://travis-ci.org/jessfraz/bpfps)
+[![Travis CI](https://travis-ci.org/genuinetools/bpfps.svg?branch=master)](https://travis-ci.org/genuinetools/bpfps)
 
 A tool to list and diagnose bpf programs. (Who watchs the watchers..? :)
 
@@ -11,16 +11,16 @@ Shoutout to [cilium's](https://github.com/cilium/cilium)
 
 #### Binaries
 
-- **darwin** [386](https://github.com/jessfraz/bpfps/releases/download/v0.0.0/bpfps-darwin-386) / [amd64](https://github.com/jessfraz/bpfps/releases/download/v0.0.0/bpfps-darwin-amd64)
-- **freebsd** [386](https://github.com/jessfraz/bpfps/releases/download/v0.0.0/bpfps-freebsd-386) / [amd64](https://github.com/jessfraz/bpfps/releases/download/v0.0.0/bpfps-freebsd-amd64)
-- **linux** [386](https://github.com/jessfraz/bpfps/releases/download/v0.0.0/bpfps-linux-386) / [amd64](https://github.com/jessfraz/bpfps/releases/download/v0.0.0/bpfps-linux-amd64) / [arm](https://github.com/jessfraz/bpfps/releases/download/v0.0.0/bpfps-linux-arm) / [arm64](https://github.com/jessfraz/bpfps/releases/download/v0.0.0/bpfps-linux-arm64)
-- **solaris** [amd64](https://github.com/jessfraz/bpfps/releases/download/v0.0.0/bpfps-solaris-amd64)
-- **windows** [386](https://github.com/jessfraz/bpfps/releases/download/v0.0.0/bpfps-windows-386) / [amd64](https://github.com/jessfraz/bpfps/releases/download/v0.0.0/bpfps-windows-amd64)
+- **darwin** [386](https://github.com/genuinetools/bpfps/releases/download/v0.0.0/bpfps-darwin-386) / [amd64](https://github.com/genuinetools/bpfps/releases/download/v0.0.0/bpfps-darwin-amd64)
+- **freebsd** [386](https://github.com/genuinetools/bpfps/releases/download/v0.0.0/bpfps-freebsd-386) / [amd64](https://github.com/genuinetools/bpfps/releases/download/v0.0.0/bpfps-freebsd-amd64)
+- **linux** [386](https://github.com/genuinetools/bpfps/releases/download/v0.0.0/bpfps-linux-386) / [amd64](https://github.com/genuinetools/bpfps/releases/download/v0.0.0/bpfps-linux-amd64) / [arm](https://github.com/genuinetools/bpfps/releases/download/v0.0.0/bpfps-linux-arm) / [arm64](https://github.com/genuinetools/bpfps/releases/download/v0.0.0/bpfps-linux-arm64)
+- **solaris** [amd64](https://github.com/genuinetools/bpfps/releases/download/v0.0.0/bpfps-solaris-amd64)
+- **windows** [386](https://github.com/genuinetools/bpfps/releases/download/v0.0.0/bpfps-windows-386) / [amd64](https://github.com/genuinetools/bpfps/releases/download/v0.0.0/bpfps-windows-amd64)
 
 #### Via Go
 
 ```bash
-$ go get github.com/jessfraz/bpfps
+$ go get github.com/genuinetools/bpfps
 ```
 
 ## Usage

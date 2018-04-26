@@ -1,6 +1,6 @@
 ---
   language: go
-  sudo: false
+  sudo: true
   notifications:
     email: true
   go:
@@ -10,6 +10,9 @@
     allow_failures:
       - go: tip
     fast_finish: true
+  before_install:
+    - sudo apt-get -qq update
+    - sudo apt-get install -y linux-headers
   install:
     - go get github.com/golang/lint/golint
     - go get honnef.co/go/tools/cmd/staticcheck

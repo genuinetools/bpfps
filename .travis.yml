@@ -11,8 +11,9 @@
       - go: tip
     fast_finish: true
   before_install:
+    - echo "deb http://us.archive.ubuntu.com/ubuntu/ xenial main" | sudo tee -a /etc/apt/sources.list
     - sudo apt-get -qq update
-    - sudo apt-get install -y linux-headers-$(uname -r) linux-libc-dev
+    - sudo apt-get install -y -t xenial linux-libc-dev
   install:
     - go get github.com/golang/lint/golint
     - go get honnef.co/go/tools/cmd/staticcheck

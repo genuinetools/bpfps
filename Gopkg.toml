@@ -29,4 +29,5 @@
 
 [[override]]
   name ="github.com/cilium/cilium"
-  branch = "master"
+  source = "github.com/jessfraz/cilium"
+  branch = "add-prog-syscalls"

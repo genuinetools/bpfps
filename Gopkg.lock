@@ -20,7 +20,7 @@
   version = "v9"
 
 [[projects]]
-  branch = "master"
+  branch = "add-prog-syscalls"
   name = "github.com/cilium/cilium"
   packages = [
     "api/v1/models",
@@ -36,7 +36,8 @@
     "pkg/pipeexec",
     "pkg/syncbytes"
   ]
-  revision = "f802f6d7a09162a19e81a4ded552daa0f3b5e760"
+  revision = "b53924e9a62b14ef7d7c0fdc529fb7bc6325f71a"
+  source = "github.com/jessfraz/cilium"
 
 [[projects]]
   name = "github.com/evalphobia/logrus_fluent"
@@ -199,7 +200,7 @@
   branch = "master"
   name = "golang.org/x/crypto"
   packages = ["ssh/terminal"]
-  revision = "b0697eccbea9adec5b7ba8008f4c33d98d733388"
+  revision = "719079de17cdc7d84bb2cd40301fc88f280eb809"
 
 [[projects]]
   branch = "master"
@@ -217,7 +218,7 @@
     "unix",
     "windows"
   ]
-  revision = "79b0c6888797020a994db17c8510466c72fe75d9"
+  revision = "bb9c189858d91f42db229b04d45a4c3d23a7662a"
 
 [[projects]]
   name = "golang.org/x/text"
@@ -259,6 +260,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "9a6d790b9b3cc6c8c9195fdd141751197f62044558899eb31d4a9cd33558c124"
+  inputs-digest = "d318cb4ddd9890487c0bd99f2d3db342539ad1d7fcb2507648bd32cb8d06ccca"
   solver-name = "gps-cdcl"
   solver-version = 1

@@ -1,22 +1,18 @@
 package main
 
-/*
-#include <linux/bpf.h>
-*/
-import "C"
-
 import (
 	"flag"
 	"fmt"
 	"os"
 	"os/signal"
+	"strings"
 	"syscall"
-	"unsafe"
+	"text/tabwriter"
+	"time"
 
 	"github.com/cilium/cilium/pkg/bpf"
 	"github.com/jessfraz/bpfps/version"
 	"github.com/sirupsen/logrus"
-	"golang.org/x/sys/unix"
 )
 
 const (
@@ -30,6 +26,8 @@ const (
 
  A tool to list and diagnose bpf programs.  (Who watchs the watchers..? :)
  Version: %s
+ Build: %s
+
 `
 )
 
@@ -45,7 +43,7 @@ func init() {
 	flag.BoolVar(&debug, "d", false, "run in debug mode")
 
 	flag.Usage = func() {
-		fmt.Fprint(os.Stderr, fmt.Sprintf(BANNER, version.VERSION))
+		fmt.Fprint(os.Stderr, fmt.Sprintf(BANNER, version.VERSION, version.GITCOMMIT))
 		flag.PrintDefaults()
 	}
 
@@ -77,94 +75,61 @@ func main() {
 		}
 	}()
 
-	// Get the next id.
-	var id, nextID uint32
-	if err := getNextID(unsafe.Pointer(&id), unsafe.Pointer(&nextID)); err != nil {
-		logrus.Fatal(err)
+	infos := getProgInfos()
+
+	if len(infos) <= 0 {
+		logrus.Fatal("no bpf programs found")
 	}
 
-	logrus.Infof("id: %#v", id)
-	logrus.Infof("next id: %#v", nextID)
+	// Print the table.
+	w := tabwriter.NewWriter(os.Stdout, 20, 1, 3, ' ', 0)
 
-	// Get the file descriptor
-	fd, err := getFDByID(nextID)
-	if err != nil {
-		logrus.Fatal(err)
+	// print header
+	fmt.Fprintln(w, "BID\tNAME\tTYPE\tUID\tMAPS\tLOADTIME")
+
+	for _, info := range infos {
+		dur, _ := time.ParseDuration(fmt.Sprintf("%dns", info.LoadTime))
+		fmt.Fprintf(w, "%d\t%s\t%s\t%d\t%#v\t%s\n", info.ID, info.Name, bpf.MapType(int(info.ProgType)).String(), info.CreatedByUID, info.MapIDs, dur)
 	}
 
-	logrus.Info("fd: %d", fd)
-
-	// Get the object's info.
-	var info bpfProgInfo
-	if err := getObjInfo(fd, unsafe.Pointer(&info), unsafe.Sizeof(info)); err != nil {
-		logrus.Fatal(err)
-	}
-
-	logrus.Infof("info: %#v", info)
+	w.Flush()
 }
 
-type bpfProgGetNextID struct {
-	startID   uint32
-	progID    uint32
-	nextID    uint32
-	openFlags uint32
-}
+func getProgInfos() []bpf.ProgInfo {
+	var (
+		bid   uint32
+		infos = []bpf.ProgInfo{}
+	)
+	for {
+		if err := bpf.GetProgNextID(bid, &bid); err != nil {
+			if !strings.Contains(err.Error(), "no such file or directory") {
+				logrus.Warn(err)
+			}
+			// break on error here
+			break
+		}
 
-type bpfProgInfo struct {
-	progType     bpf.ProgType
-	id           uint32
-	mapIDs       uint64
-	createdByUID uint32
-	loadTime     uint64 /* ns since boottime */
-	name         string
-}
+		// Get the file descriptor
+		fd, err := bpf.GetProgFDByID(bid)
+		if err != nil {
+			logrus.Warn(err)
+			continue
+		}
 
-type bpfAttrObj struct {
-	bpfFD   uint32
-	infoLen uint32
-	info    uint64
-}
+		// Get the object's info.
+		info, err := bpf.GetObjInfoByFD(fd)
+		if err != nil {
+			logrus.Warn(err)
+			continue
+		}
 
-func getNextID(start, next unsafe.Pointer) error {
-	attr := bpfProgGetNextID{
-		startID: uint32(uintptr(start)),
-		nextID:  uint32(uintptr(next)),
+		if &info == nil {
+			logrus.Warnf("No program info returned for fd %d, bid %d", fd, bid)
+		}
+		infos = append(infos, info)
 	}
 
-	ret, _, err := unix.Syscall(unix.SYS_BPF, C.BPF_PROG_GET_NEXT_ID, uintptr(unsafe.Pointer(&attr)), unsafe.Sizeof(attr))
-	if ret != 0 || err != 0 {
-		return fmt.Errorf("Unable to get next id: %v", err)
-	}
-
-	return nil
-}
-
-func getFDByID(id uint32) (int, error) {
-	attr := bpfProgGetNextID{
-		progID: uint32(uintptr(id)),
-	}
-
-	fd, _, err := unix.Syscall(unix.SYS_BPF, C.BPF_PROG_GET_FD_BY_ID, uintptr(unsafe.Pointer(&attr)), unsafe.Sizeof(attr))
-	if fd < 0 || err != 0 {
-		return int(fd), fmt.Errorf("Unable to get fd for program id %d: %v", id, err)
-	}
-
-	return int(fd), nil
-}
-
-func getObjInfo(fd int, info unsafe.Pointer, size uintptr) error {
-	attr := bpfAttrObj{
-		bpfFD:   uint32(fd),
-		infoLen: uint32(size),
-		info:    uint64(uintptr(info)),
-	}
-
-	ret, _, err := unix.Syscall(unix.SYS_BPF, C.BPF_OBJ_GET_INFO_BY_FD, uintptr(unsafe.Pointer(&attr)), unsafe.Sizeof(attr))
-	if ret != 0 || err != 0 {
-		return fmt.Errorf("Unable to get object info: %v", err)
-	}
-
-	return nil
+	return infos
 }
 
 func usageAndExit(message string, exitCode int) {

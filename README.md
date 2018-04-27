@@ -19,6 +19,10 @@ Shoutout to [cilium's](https://github.com/cilium/cilium)
 $ go get github.com/genuinetools/bpfps
 ```
 
+#### Using your package manager
+
+- ArchLinux: [precompiled binary](https://aur.archlinux.org/packages/bpfps-bin), [compiled from source](https://aur.archlinux.org/packages/bpfps-git)
+
 ## Usage
 
 ```console

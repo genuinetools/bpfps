@@ -89,7 +89,7 @@ func main() {
 
 	for _, info := range infos {
 		dur, _ := time.ParseDuration(fmt.Sprintf("%dns", info.LoadTime))
-		fmt.Fprintf(w, "%d\t%s\t%s\t%d\t%#v\t%s\n", info.ID, info.Name, bpf.MapType(int(info.ProgType)).String(), info.CreatedByUID, info.MapIDs, dur)
+		fmt.Fprintf(w, "%d\t%s\t%s\t%d\t%#v\t%s\n", info.ID, info.Name, bpf.ProgType(int(info.ProgType)).String(), info.CreatedByUID, info.MapIDs, dur)
 	}
 
 	w.Flush()

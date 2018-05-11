@@ -20,6 +20,9 @@ const (
 	// LogSubsys is the field denoting the subsystem when logging
 	LogSubsys = "subsys"
 
+	// Signal is the field to print os signals on exit etc.
+	Signal = "signal"
+
 	// Node is a host machine in the cluster, running cilium
 	Node = "node"
 
@@ -65,6 +68,9 @@ const (
 
 	// IPAddr is an IPV4 or IPv6 address
 	IPAddr = "ipAddr"
+
+	// IPMask is an IPV4 or IPv6 address mask
+	IPMask = "ipMask"
 
 	// IPv4 is an IPv4 address
 	IPv4 = "ipv4"

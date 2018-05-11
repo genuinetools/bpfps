@@ -36,7 +36,7 @@
     "pkg/pipeexec",
     "pkg/syncbytes"
   ]
-  revision = "daf64f9d4ef172e05222000b4893e3eb167c541e"
+  revision = "42a47522e608c1603d04458470ae02a4d2585c07"
 
 [[projects]]
   name = "github.com/evalphobia/logrus_fluent"
@@ -90,7 +90,7 @@
   branch = "master"
   name = "github.com/go-openapi/runtime"
   packages = ["."]
-  revision = "f12926f16ac2fb1da15316fd0aa84ce0d64550c3"
+  revision = "c0cae94704c76c8643896d8054080f91e920105b"
 
 [[projects]]
   branch = "master"
@@ -114,7 +114,7 @@
   branch = "master"
   name = "github.com/go-openapi/validate"
   packages = ["."]
-  revision = "f8f9c5961cd5fd7c22af8d93d3190b640b4c72af"
+  revision = "9286f6d0e5c1ffc7cf2bda1d59291dc3c4f2f828"
 
 [[projects]]
   branch = "master"
@@ -142,7 +142,7 @@
   branch = "master"
   name = "github.com/mitchellh/mapstructure"
   packages = ["."]
-  revision = "00c29f56e2386353d58c599509e8dc3801b0d716"
+  revision = "bb74f1db0675b241733089d5a1faa5dd8b0ef57b"
 
 [[projects]]
   branch = "master"
@@ -199,7 +199,7 @@
   branch = "master"
   name = "golang.org/x/crypto"
   packages = ["ssh/terminal"]
-  revision = "dccd99e89d39b13e12f1103c72e3bc49eb40a833"
+  revision = "2d027ae1dddd4694d54f7a8b6cbe78dca8720226"
 
 [[projects]]
   branch = "master"
@@ -208,7 +208,7 @@
     "context",
     "idna"
   ]
-  revision = "5f9ae10d9af5b1c89ae6904293b14b064d4ada23"
+  revision = "f73e4c9ed3b7ebdd5f699a16a880c2b1994e50dd"
 
 [[projects]]
   branch = "master"
@@ -217,7 +217,7 @@
     "unix",
     "windows"
   ]
-  revision = "bb9c189858d91f42db229b04d45a4c3d23a7662a"
+  revision = "d0faeb539838e250bd0a9db4182d48d4a1915181"
 
 [[projects]]
   name = "golang.org/x/text"

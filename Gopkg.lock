@@ -36,7 +36,7 @@
     "pkg/pipeexec",
     "pkg/syncbytes"
   ]
-  revision = "597871e177df8947407c3b2c5c0d1eaa3ad20575"
+  revision = "daf64f9d4ef172e05222000b4893e3eb167c541e"
 
 [[projects]]
   name = "github.com/evalphobia/logrus_fluent"

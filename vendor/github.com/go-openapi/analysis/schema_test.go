@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"path"
+	"path/filepath"
 	"testing"
 
 	"net/http"
@@ -45,7 +46,7 @@ var complexSchemas = []*spec.Schema{
 func knownRefs(base string) []spec.Ref {
 	urls := []string{"bool", "string", "integer", "float", "date", "object", "format"}
 
-	var result []spec.Ref
+	result := make([]spec.Ref, 0, len(urls))
 	for _, u := range urls {
 		result = append(result, spec.MustCreateRef(fmt.Sprintf("%s/%s", base, path.Join("known", u))))
 	}
@@ -55,7 +56,7 @@ func knownRefs(base string) []spec.Ref {
 func complexRefs(base string) []spec.Ref {
 	urls := []string{"object", "array", "map"}
 
-	var result []spec.Ref
+	result := make([]spec.Ref, 0, len(urls))
 	for _, u := range urls {
 		result = append(result, spec.MustCreateRef(fmt.Sprintf("%s/%s", base, path.Join("complex", u))))
 	}
@@ -165,6 +166,27 @@ func TestSchemaAnalysis_Array(t *testing.T) {
 		}
 	}
 
+	// edge case: unrestricted array (beyond Swagger)
+	at := spec.ArrayProperty(nil)
+	at.Items = nil
+	sch, err := Schema(SchemaOpts{Schema: at})
+	if assert.NoError(t, err) {
+		assert.True(t, sch.IsArray)
+		assert.False(t, sch.IsTuple)
+		assert.False(t, sch.IsKnownType)
+		assert.True(t, sch.IsSimpleSchema)
+	}
+
+	// unrestricted array with explicit empty schema
+	at = spec.ArrayProperty(nil)
+	at.Items = &spec.SchemaOrArray{}
+	sch, err = Schema(SchemaOpts{Schema: at})
+	if assert.NoError(t, err) {
+		assert.True(t, sch.IsArray)
+		assert.False(t, sch.IsTuple)
+		assert.False(t, sch.IsKnownType)
+		assert.True(t, sch.IsSimpleSchema)
+	}
 }
 
 func TestSchemaAnalysis_Map(t *testing.T) {
@@ -203,6 +225,17 @@ func TestSchemaAnalysis_Tuple(t *testing.T) {
 	at.Items.Schemas = append(at.Items.Schemas, *spec.StringProperty(), *spec.Int64Property())
 
 	sch, err := Schema(SchemaOpts{Schema: at})
+	if assert.NoError(t, err) {
+		assert.True(t, sch.IsTuple)
+		assert.False(t, sch.IsTupleWithExtra)
+		assert.False(t, sch.IsKnownType)
+		assert.False(t, sch.IsSimpleSchema)
+	}
+
+	// edge case: tuple with a single element
+	at.Items = &spec.SchemaOrArray{}
+	at.Items.Schemas = append(at.Items.Schemas, *spec.StringProperty())
+	sch, err = Schema(SchemaOpts{Schema: at})
 	if assert.NoError(t, err) {
 		assert.True(t, sch.IsTuple)
 		assert.False(t, sch.IsTupleWithExtra)
@@ -262,5 +295,40 @@ func TestSchemaAnalysis_SimpleSchema(t *testing.T) {
 			assert.False(t, sch.IsSimpleSchema, "item at %d should not be a simple schema", i)
 		}
 	}
+}
 
+func TestSchemaAnalys_InvalidSchema(t *testing.T) {
+	// explore error cases in schema analysis:
+	// the only cause for failure is a wrong $ref at some place
+	bp := filepath.Join("fixtures", "bugs", "1602", "other-invalid-pointers.yaml")
+	sp := loadOrFail(t, bp)
+
+	// invalid ref not detected (no digging further)
+	def := sp.Definitions["invalidRefInObject"]
+	_, err := Schema(SchemaOpts{Schema: &def, Root: sp, BasePath: bp})
+	assert.NoError(t, err, "did not expect an error here, in spite of the underlying invalid $ref")
+
+	def = sp.Definitions["invalidRefInTuple"]
+	_, err = Schema(SchemaOpts{Schema: &def, Root: sp, BasePath: bp})
+	assert.NoError(t, err, "did not expect an error here, in spite of the underlying invalid $ref")
+
+	// invalid ref detected (digging)
+	schema := refSchema(spec.MustCreateRef("#/definitions/noWhere"))
+	_, err = Schema(SchemaOpts{Schema: schema, Root: sp, BasePath: bp})
+	assert.Error(t, err, "expected an error here")
+
+	def = sp.Definitions["invalidRefInMap"]
+	_, err = Schema(SchemaOpts{Schema: &def, Root: sp, BasePath: bp})
+	assert.Error(t, err, "expected an error here")
+
+	def = sp.Definitions["invalidRefInArray"]
+	_, err = Schema(SchemaOpts{Schema: &def, Root: sp, BasePath: bp})
+	assert.Error(t, err, "expected an error here")
+
+	def = sp.Definitions["indirectToInvalidRef"]
+	_, err = Schema(SchemaOpts{Schema: &def, Root: sp, BasePath: bp})
+	assert.Error(t, err, "expected an error here")
+
+	//bbb, _ := json.MarshalIndent(def, "", " ")
+	//log.Printf(string(bbb))
 }

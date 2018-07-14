@@ -27,6 +27,14 @@
   name = "github.com/Sirupsen/logrus"
   source = "github.com/sirupsen/logrus"
 
-[[override]]
+[[constraint]]
   name ="github.com/cilium/cilium"
+  branch = "master"
+
+[[override]]
+  name ="github.com/go-openapi/loads"
+  branch = "master"
+
+[[override]]
+  name ="github.com/go-openapi/swag"
   branch = "master"

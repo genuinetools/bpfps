@@ -12,12 +12,8 @@
 
 package unix
 
-import (
-	"strings"
-	"unsafe"
-)
+import "unsafe"
 
-// SockaddrDatalink implements the Sockaddr interface for AF_LINK type sockets.
 type SockaddrDatalink struct {
 	Len    uint8
 	Family uint8
@@ -36,7 +32,7 @@ func nametomib(name string) (mib []_C_int, err error) {
 
 	// NOTE(rsc): It seems strange to set the buffer to have
 	// size CTL_MAXNAME+2 but use only CTL_MAXNAME
-	// as the size. I don't know why the +2 is here, but the
+	// as the size.  I don't know why the +2 is here, but the
 	// kernel uses +2 for its own implementation of this function.
 	// I am scared that if we don't include the +2 here, the kernel
 	// will silently write 2 words farther than we specify
@@ -56,6 +52,18 @@ func nametomib(name string) (mib []_C_int, err error) {
 		return nil, err
 	}
 	return buf[0 : n/siz], nil
+}
+
+func direntIno(buf []byte) (uint64, bool) {
+	return readInt(buf, unsafe.Offsetof(Dirent{}.Fileno), unsafe.Sizeof(Dirent{}.Fileno))
+}
+
+func direntReclen(buf []byte) (uint64, bool) {
+	return readInt(buf, unsafe.Offsetof(Dirent{}.Reclen), unsafe.Sizeof(Dirent{}.Reclen))
+}
+
+func direntNamlen(buf []byte) (uint64, bool) {
+	return readInt(buf, unsafe.Offsetof(Dirent{}.Namlen), unsafe.Sizeof(Dirent{}.Namlen))
 }
 
 //sysnb pipe() (r int, w int, err error)
@@ -97,23 +105,6 @@ func Accept4(fd, flags int) (nfd int, sa Sockaddr, err error) {
 	return
 }
 
-const ImplementsGetwd = true
-
-//sys	Getcwd(buf []byte) (n int, err error) = SYS___GETCWD
-
-func Getwd() (string, error) {
-	var buf [PathMax]byte
-	_, err := Getcwd(buf[0:])
-	if err != nil {
-		return "", err
-	}
-	n := clen(buf[:])
-	if n < 1 {
-		return "", EINVAL
-	}
-	return string(buf[:n]), nil
-}
-
 func Getfsstat(buf []Statfs_t, flags int) (n int, err error) {
 	var _p0 unsafe.Pointer
 	var bufsize uintptr
@@ -129,15 +120,17 @@ func Getfsstat(buf []Statfs_t, flags int) (n int, err error) {
 	return
 }
 
-func setattrlistTimes(path string, times []Timespec, flags int) error {
-	// used on Darwin for UtimesNano
-	return ENOSYS
-}
-
 // Derive extattr namespace and attribute name
 
 func xattrnamespace(fullattr string) (ns int, attr string, err error) {
-	s := strings.IndexByte(fullattr, '.')
+	s := -1
+	for idx, val := range fullattr {
+		if val == '.' {
+			s = idx
+			break
+		}
+	}
+
 	if s == -1 {
 		return -1, "", ENOATTR
 	}
@@ -278,6 +271,7 @@ func Listxattr(file string, dest []byte) (sz int, err error) {
 
 	// FreeBSD won't allow you to list xattrs from multiple namespaces
 	s := 0
+	var e error
 	for _, nsid := range [...]int{EXTATTR_NAMESPACE_USER, EXTATTR_NAMESPACE_SYSTEM} {
 		stmp, e := ExtattrListFile(file, nsid, uintptr(d), destsiz)
 
@@ -289,6 +283,7 @@ func Listxattr(file string, dest []byte) (sz int, err error) {
 		 * we don't have read permissions on, so don't ignore those errors
 		 */
 		if e != nil && e == EPERM && nsid != EXTATTR_NAMESPACE_USER {
+			e = nil
 			continue
 		} else if e != nil {
 			return s, e
@@ -302,7 +297,7 @@ func Listxattr(file string, dest []byte) (sz int, err error) {
 		d = initxattrdest(dest, s)
 	}
 
-	return s, nil
+	return s, e
 }
 
 func Flistxattr(fd int, dest []byte) (sz int, err error) {
@@ -310,9 +305,11 @@ func Flistxattr(fd int, dest []byte) (sz int, err error) {
 	destsiz := len(dest)
 
 	s := 0
+	var e error
 	for _, nsid := range [...]int{EXTATTR_NAMESPACE_USER, EXTATTR_NAMESPACE_SYSTEM} {
 		stmp, e := ExtattrListFd(fd, nsid, uintptr(d), destsiz)
 		if e != nil && e == EPERM && nsid != EXTATTR_NAMESPACE_USER {
+			e = nil
 			continue
 		} else if e != nil {
 			return s, e
@@ -326,7 +323,7 @@ func Flistxattr(fd int, dest []byte) (sz int, err error) {
 		d = initxattrdest(dest, s)
 	}
 
-	return s, nil
+	return s, e
 }
 
 func Llistxattr(link string, dest []byte) (sz int, err error) {
@@ -334,9 +331,11 @@ func Llistxattr(link string, dest []byte) (sz int, err error) {
 	destsiz := len(dest)
 
 	s := 0
+	var e error
 	for _, nsid := range [...]int{EXTATTR_NAMESPACE_USER, EXTATTR_NAMESPACE_SYSTEM} {
 		stmp, e := ExtattrListLink(link, nsid, uintptr(d), destsiz)
 		if e != nil && e == EPERM && nsid != EXTATTR_NAMESPACE_USER {
+			e = nil
 			continue
 		} else if e != nil {
 			return s, e
@@ -350,7 +349,7 @@ func Llistxattr(link string, dest []byte) (sz int, err error) {
 		d = initxattrdest(dest, s)
 	}
 
-	return s, nil
+	return s, e
 }
 
 //sys   ioctl(fd int, req uint, arg uintptr) (err error)
@@ -390,52 +389,6 @@ func IoctlGetTermios(fd int, req uint) (*Termios, error) {
 	var value Termios
 	err := ioctl(fd, req, uintptr(unsafe.Pointer(&value)))
 	return &value, err
-}
-
-func Uname(uname *Utsname) error {
-	mib := []_C_int{CTL_KERN, KERN_OSTYPE}
-	n := unsafe.Sizeof(uname.Sysname)
-	if err := sysctl(mib, &uname.Sysname[0], &n, nil, 0); err != nil {
-		return err
-	}
-
-	mib = []_C_int{CTL_KERN, KERN_HOSTNAME}
-	n = unsafe.Sizeof(uname.Nodename)
-	if err := sysctl(mib, &uname.Nodename[0], &n, nil, 0); err != nil {
-		return err
-	}
-
-	mib = []_C_int{CTL_KERN, KERN_OSRELEASE}
-	n = unsafe.Sizeof(uname.Release)
-	if err := sysctl(mib, &uname.Release[0], &n, nil, 0); err != nil {
-		return err
-	}
-
-	mib = []_C_int{CTL_KERN, KERN_VERSION}
-	n = unsafe.Sizeof(uname.Version)
-	if err := sysctl(mib, &uname.Version[0], &n, nil, 0); err != nil {
-		return err
-	}
-
-	// The version might have newlines or tabs in it, convert them to
-	// spaces.
-	for i, b := range uname.Version {
-		if b == '\n' || b == '\t' {
-			if i == len(uname.Version)-1 {
-				uname.Version[i] = 0
-			} else {
-				uname.Version[i] = ' '
-			}
-		}
-	}
-
-	mib = []_C_int{CTL_HW, HW_MACHINE}
-	n = unsafe.Sizeof(uname.Machine)
-	if err := sysctl(mib, &uname.Machine[0], &n, nil, 0); err != nil {
-		return err
-	}
-
-	return nil
 }
 
 /*
@@ -478,11 +431,9 @@ func Uname(uname *Utsname) error {
 //sys	Flock(fd int, how int) (err error)
 //sys	Fpathconf(fd int, name int) (val int, err error)
 //sys	Fstat(fd int, stat *Stat_t) (err error)
-//sys	Fstatat(fd int, path string, stat *Stat_t, flags int) (err error)
 //sys	Fstatfs(fd int, stat *Statfs_t) (err error)
 //sys	Fsync(fd int) (err error)
 //sys	Ftruncate(fd int, length int64) (err error)
-//sys	Getdents(fd int, buf []byte) (n int, err error)
 //sys	Getdirentries(fd int, buf []byte, basep *uintptr) (n int, err error)
 //sys	Getdtablesize() (size int)
 //sysnb	Getegid() (egid int)
@@ -510,6 +461,11 @@ func Uname(uname *Utsname) error {
 //sys	Mkdirat(dirfd int, path string, mode uint32) (err error)
 //sys	Mkfifo(path string, mode uint32) (err error)
 //sys	Mknod(path string, mode uint32, dev int) (err error)
+//sys	Mlock(b []byte) (err error)
+//sys	Mlockall(flags int) (err error)
+//sys	Mprotect(b []byte, prot int) (err error)
+//sys	Munlock(b []byte) (err error)
+//sys	Munlockall() (err error)
 //sys	Nanosleep(time *Timespec, leftover *Timespec) (err error)
 //sys	Open(path string, mode int, perm uint32) (fd int, err error)
 //sys	Openat(fdat int, path string, mode int, perm uint32) (fd int, err error)
@@ -556,7 +512,6 @@ func Uname(uname *Utsname) error {
 //sys	readlen(fd int, buf *byte, nbuf int) (n int, err error) = SYS_READ
 //sys	writelen(fd int, buf *byte, nbuf int) (n int, err error) = SYS_WRITE
 //sys	accept4(fd int, rsa *RawSockaddrAny, addrlen *_Socklen, flags int) (nfd int, err error)
-//sys	utimensat(dirfd int, path string, times *[2]Timespec, flags int) (err error)
 
 /*
  * Unimplemented
@@ -590,6 +545,9 @@ func Uname(uname *Utsname) error {
 // Add_profil
 // Kdebug_trace
 // Sigreturn
+// Mmap
+// Mlock
+// Munlock
 // Atsocket
 // Kqueue_from_portset_np
 // Kqueue_portset
@@ -599,6 +557,7 @@ func Uname(uname *Utsname) error {
 // Searchfs
 // Delete
 // Copyfile
+// Poll
 // Watchevent
 // Waitevent
 // Modwatch
@@ -681,6 +640,8 @@ func Uname(uname *Utsname) error {
 // Lio_listio
 // __pthread_cond_wait
 // Iopolicysys
+// Mlockall
+// Munlockall
 // __pthread_kill
 // __pthread_sigmask
 // __sigwait
@@ -733,6 +694,7 @@ func Uname(uname *Utsname) error {
 // Sendmsg_nocancel
 // Recvfrom_nocancel
 // Accept_nocancel
+// Msync_nocancel
 // Fcntl_nocancel
 // Select_nocancel
 // Fsync_nocancel

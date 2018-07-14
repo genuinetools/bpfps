@@ -60,7 +60,7 @@ func init() {
 	}
 
 	// Mount the bpf filesystem.
-	bpf.MountFS()
+	bpf.CheckOrMountFS("/sys/fs/bpf")
 }
 
 func main() {

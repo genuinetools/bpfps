@@ -25,7 +25,9 @@ import (
 	"unsafe"
 
 	"github.com/cilium/cilium/pkg/byteorder"
+	"github.com/cilium/cilium/pkg/comparator"
 	"github.com/cilium/cilium/pkg/lock"
+	"github.com/cilium/cilium/pkg/logging"
 	"github.com/cilium/cilium/pkg/logging/logfields"
 
 	"github.com/sirupsen/logrus"
@@ -145,7 +147,6 @@ func NewMap(name string, mapType MapType, keySize int, valueSize int, maxEntries
 		name:       path.Base(name),
 		dumpParser: dumpParser,
 	}
-	m.setPathIfUnset()
 	return m
 }
 
@@ -270,7 +271,17 @@ func (m *Map) OpenOrCreate() (bool, error) {
 		os.Remove(m.path)
 	}
 
+retry:
 	fd, isNew, err := OpenOrCreateMap(m.path, int(m.MapType), m.KeySize, m.ValueSize, m.MaxEntries, m.Flags)
+	if err != nil && m.MapType == BPF_MAP_TYPE_LPM_TRIE {
+		// If the map type is an LPM, then we can typically fall back
+		// to a hash map. Note that this requires datapath support,
+		// such as an unrolled loop performing repeated lookups with
+		// a defined set of prefixes.
+		log.WithError(err).Debugf("Kernel does not support LPM maps, creating hash table for %s instead.", m.name)
+		m.MapType = BPF_MAP_TYPE_HASH
+		goto retry
+	}
 	if err != nil {
 		return false, err
 	}
@@ -511,4 +522,24 @@ func ConvertKeyValue(bKey []byte, bValue []byte, key interface{}, value interfac
 	}
 
 	return nil
+}
+
+// MetadataDiff compares the metadata of the BPF maps and returns false if the
+// metadata does not match
+func (m *Map) MetadataDiff(other *Map) bool {
+	if m == nil || other == nil {
+		return false
+	}
+
+	// create copies
+	m1 := *m
+	m2 := *other
+
+	// ignore fd in diff
+	m1.fd = 0
+	m2.fd = 0
+
+	logging.MultiLine(log.Debug, comparator.Compare(m1, m2))
+
+	return m1.DeepEquals(&m2)
 }

@@ -35,6 +35,9 @@ const (
 	// EndpointState is the current endpoint state
 	EndpointState = "endpointState"
 
+	// EventUUID is an event unique identifier
+	EventUUID = "eventID"
+
 	// ContainerID is the container identifier
 	ContainerID = "containerID"
 
@@ -80,6 +83,12 @@ const (
 
 	// BuildDuration is the time elapsed to build a BPF program
 	BuildDuration = "buildDuration"
+
+	// PolicyRegenerationTime is the time elapsed to generate a policy
+	PolicyRegenerationTime = "policyRegenerationTime"
+
+	// EndpointRegenerationTime is the time elapsed to generate an endpoint
+	EndpointRegenerationTime = "endpointRegenerationTime"
 
 	// StartTime is the start time of an event
 	StartTime = "startTime"
@@ -253,4 +262,13 @@ const (
 
 	// BPFHeaderHash is the hash of the BPF header.
 	BPFHeaderfileHash = "bpfHeaderfileHash"
+
+	// BPFMapPath is the path of a BPF map in the filesystem.
+	BPFMapPath = "bpfMapPath"
+
+	// BPFMapFD is the file descriptor for a BPF map.
+	BPFMapFD = "bpfMapFileDescriptor"
+
+	// ThreadID is the Envoy thread ID.
+	ThreadID = "threadID"
 )

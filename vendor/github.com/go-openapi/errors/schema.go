@@ -63,7 +63,6 @@ const (
 	unallowedPropertyNoIn     = "%s.%s is a forbidden property"
 	failedAllPatternProps     = "%s.%s in %s failed all pattern properties"
 	failedAllPatternPropsNoIn = "%s.%s failed all pattern properties"
-	multipleOfMustBePositive  = "factor MultipleOf declared for %s must be positive: %v"
 )
 
 // All code responses can be used to differentiate errors for different handling
@@ -90,7 +89,6 @@ const (
 	TooManyPropertiesCode
 	UnallowedPropertyCode
 	FailedAllPatternPropsCode
-	MultipleOfMustBePositiveCode
 )
 
 // CompositeError is an error that groups several errors together
@@ -447,7 +445,7 @@ func ExceedsMinimum(name, in string, min float64, exclusive bool) *Validation {
 }
 
 // NotMultipleOf error for when multiple of validation fails
-func NotMultipleOf(name, in string, multiple interface{}) *Validation {
+func NotMultipleOf(name, in string, multiple float64) *Validation {
 	var msg string
 	if in == "" {
 		msg = fmt.Sprintf(multipleOfFailNoIn, name, multiple)
@@ -546,17 +544,5 @@ func FailedPattern(name, in, pattern string) *Validation {
 		Name:    name,
 		In:      in,
 		message: msg,
-	}
-}
-
-// MultipleOfMustBePositive error for when a
-// multipleOf factor is negative
-func MultipleOfMustBePositive(name, in string, factor interface{}) *Validation {
-	return &Validation{
-		code:    MultipleOfMustBePositiveCode,
-		Name:    name,
-		In:      in,
-		Value:   factor,
-		message: fmt.Sprintf(multipleOfMustBePositive, name, factor),
 	}
 }

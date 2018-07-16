@@ -21,9 +21,9 @@ jobs:
       deploy:
         provider: releases
         file:
+          - cross/bpfps-linux-amd64
           - cross/bpfps-linux-amd64.md5
           - cross/bpfps-linux-amd64.sha256
-          - cross/bpfps-linux-amd64
         skip_cleanup: true
         on:
           tags: true

@@ -1,6 +1,8 @@
 # bpfps
 
-[![Travis CI](https://travis-ci.org/genuinetools/bpfps.svg?branch=master)](https://travis-ci.org/genuinetools/bpfps)
+[![Travis CI](https://img.shields.io/travis/genuinetools/bpfps.svg?style=for-the-badge)](https://travis-ci.org/genuinetools/bpfps)
+[![GoDoc](https://img.shields.io/badge/godoc-reference-5272B4.svg?style=for-the-badge)](https://godoc.org/github.com/genuinetools/bpfps)
+[![Github All Releases](https://img.shields.io/github/downloads/genuinetools/bpfps/total.svg?style=for-the-badge)](https://github.com/genuinetools/bpfps/releases)
 
 A tool to list and diagnose bpf programs. (Who watches the watchers..? :)
 
@@ -10,6 +12,8 @@ Shoutout to [cilium's](https://github.com/cilium/cilium)
 ## Installation
 
 #### Binaries
+
+For installation instructions from binaries please visit the [Releases Page](https://github.com/genuinetools/bpfps/releases).
 
 - **linux** [amd64](https://github.com/genuinetools/bpfps/releases/download/v0.1.3/bpfps-linux-amd64) 
 

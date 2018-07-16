@@ -9,17 +9,21 @@ A tool to list and diagnose bpf programs. (Who watches the watchers..? :)
 Shoutout to [cilium's](https://github.com/cilium/cilium) 
 [golang bpf package](https://godoc.org/github.com/cilium/cilium/pkg/bpf) for doing a lot of heavy lifting here.
 
+ * [Installation](README.md#installation)
+      * [Binaries](README.md#binaries)
+      * [Via Go](README.md#via-go)
+      * [Using your package manager](README.md#using-your-package-manager)
+ * [Usage](README.md#usage)
+
 ## Installation
 
 #### Binaries
 
 For installation instructions from binaries please visit the [Releases Page](https://github.com/genuinetools/bpfps/releases).
 
-- **linux** [amd64](https://github.com/genuinetools/bpfps/releases/download/v0.1.3/bpfps-linux-amd64) 
-
 #### Via Go
 
-```bash
+```console
 $ go get github.com/genuinetools/bpfps
 ```
 
@@ -31,21 +35,17 @@ $ go get github.com/genuinetools/bpfps
 
 ```console
 $ bpfps -h
- _            __
-| |__  _ __  / _|_ __  ___
-| '_ \| '_ \| |_| '_ \/ __|
-| |_) | |_) |  _| |_) \__ \
-|_.__/| .__/|_| | .__/|___/
-      |_|       |_|
+bpfps -  A tool to list and diagnose bpf programs. (Who watches the watchers..? :).
 
- A tool to list and diagnose bpf programs.  (Who watches the watchers..? :)
- Version: v0.1.3
- Build: be7363d
+Usage: bpfps <command>
 
-  -d    run in debug mode
-  -v    print version and exit (shorthand)
-  -version
-        print version and exit
+Flags:
+
+  -d  enable debug logging (default: false)
+
+Commands:
+
+  version  Show the version information.
 ```
 
 ```console

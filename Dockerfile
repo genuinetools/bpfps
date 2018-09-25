@@ -14,8 +14,8 @@ RUN set -x \
 		git \
 		gcc \
 		libc-dev \
-		libgcc \
 		linux-headers \
+		libgcc \
 		make \
 	&& cd /go/src/github.com/genuinetools/bpfps \
 	&& make static \
@@ -24,7 +24,7 @@ RUN set -x \
 	&& rm -rf /go \
 	&& echo "Build complete."
 
-FROM scratch
+FROM alpine:latest
 
 COPY --from=builder /usr/bin/bpfps /usr/bin/bpfps
 COPY --from=builder /etc/ssl/certs/ /etc/ssl/certs

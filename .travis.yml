@@ -6,7 +6,7 @@ before_install:
   - echo "deb http://us.archive.ubuntu.com/ubuntu/ xenial main" | sudo tee -a /etc/apt/sources.list
   - sudo apt-get -qq update
   - sudo apt-get install -y -t xenial linux-libc-dev
-  - go get github.com/golang/lint/golint
+  - go get golang.org/x/lint/golint
   - go get honnef.co/go/tools/cmd/staticcheck
 jobs:
   include:

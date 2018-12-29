@@ -11,6 +11,12 @@ Shoutout to [cilium's](https://github.com/cilium/cilium)
 
 <!-- toc -->
 
+- [Installation](#installation)
+    + [Binaries](#binaries)
+    + [Via Go](#via-go)
+    + [Using your package manager](#using-your-package-manager)
+- [Usage](#usage)
+
 <!-- tocstop -->
 
 ## Installation

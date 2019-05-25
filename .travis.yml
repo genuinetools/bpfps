@@ -1,7 +1,7 @@
 language: go
 sudo: true
 go:
-  - 1.10.x
+  - 1.11.x
 before_install:
   - echo "deb http://us.archive.ubuntu.com/ubuntu/ xenial main" | sudo tee -a /etc/apt/sources.list
   - sudo apt-get -qq update

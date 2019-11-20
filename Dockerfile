@@ -16,6 +16,7 @@ RUN set -x \
 		gcc \
 		libc-dev \
 		libgcc \
+		linux-headers \
 		make \
 	&& cd /go/src/github.com/genuinetools/bpfps \
 	&& make static \

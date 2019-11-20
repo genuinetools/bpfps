@@ -15,7 +15,6 @@ RUN set -x \
 		git \
 		gcc \
 		libc-dev \
-		linux-headers \
 		libgcc \
 		make \
 	&& cd /go/src/github.com/genuinetools/bpfps \

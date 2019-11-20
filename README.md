@@ -1,6 +1,7 @@
 # bpfps
 
-[![Travis CI](https://img.shields.io/travis/genuinetools/bpfps.svg?style=for-the-badge)](https://travis-ci.org/genuinetools/bpfps)
+![make-all](https://github.com/genuinetools/bpfps/workflows/make%20all/badge.svg)
+![make-image](https://github.com/genuinetools/bpfps/workflows/make%20image/badge.svg)
 [![GoDoc](https://img.shields.io/badge/godoc-reference-5272B4.svg?style=for-the-badge)](https://godoc.org/github.com/genuinetools/bpfps)
 [![Github All Releases](https://img.shields.io/github/downloads/genuinetools/bpfps/total.svg?style=for-the-badge)](https://github.com/genuinetools/bpfps/releases)
 
@@ -9,15 +10,8 @@ A tool to list and diagnose bpf programs. (Who watches the watchers..? :)
 Shoutout to [cilium's](https://github.com/cilium/cilium) 
 [golang bpf package](https://godoc.org/github.com/cilium/cilium/pkg/bpf) for doing a lot of heavy lifting here.
 
-<!-- toc -->
-
-- [Installation](#installation)
-    + [Binaries](#binaries)
-    + [Via Go](#via-go)
-    + [Using your package manager](#using-your-package-manager)
-- [Usage](#usage)
-
-<!-- tocstop -->
+<!-- START doctoc -->
+<!-- END doctoc -->
 
 ## Installation
 

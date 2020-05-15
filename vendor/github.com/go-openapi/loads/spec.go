@@ -20,7 +20,10 @@ import (
 	"fmt"
 	"net/url"
 
+	"path/filepath"
+
 	"github.com/go-openapi/analysis"
+	"github.com/go-openapi/loads/fmts"
 	"github.com/go-openapi/spec"
 	"github.com/go-openapi/swag"
 )
@@ -49,7 +52,7 @@ func init() {
 	defaultLoader = &loader{Match: func(_ string) bool { return true }, Fn: JSONDoc}
 	loaders = defaultLoader
 	spec.PathLoader = loaders.Fn
-	AddLoader(swag.YAMLMatcher, swag.YAMLDoc)
+	AddLoader(fmts.YAMLMatcher, fmts.YAMLDoc)
 }
 
 // AddLoader for a document
@@ -88,22 +91,6 @@ type Document struct {
 	origSpec     *spec.Swagger
 	schema       *spec.Schema
 	raw          json.RawMessage
-}
-
-// Embedded returns a Document based on embedded specs. No analysis is required
-func Embedded(orig, flat json.RawMessage) (*Document, error) {
-	var origSpec, flatSpec spec.Swagger
-	if err := json.Unmarshal(orig, &origSpec); err != nil {
-		return nil, err
-	}
-	if err := json.Unmarshal(flat, &flatSpec); err != nil {
-		return nil, err
-	}
-	return &Document{
-		raw:      orig,
-		origSpec: &origSpec,
-		spec:     &flatSpec,
-	}, nil
 }
 
 // Spec loads a new spec document
@@ -159,11 +146,11 @@ func Analyzed(data json.RawMessage, version string) (*Document, error) {
 	trimmed := bytes.TrimSpace(data)
 	if len(trimmed) > 0 {
 		if trimmed[0] != '{' && trimmed[0] != '[' {
-			yml, err := swag.BytesToYAMLDoc(trimmed)
+			yml, err := fmts.BytesToYAMLDoc(trimmed)
 			if err != nil {
 				return nil, fmt.Errorf("analyzed: %v", err)
 			}
-			d, err := swag.YAMLToJSON(yml)
+			d, err := fmts.YAMLToJSON(yml)
 			if err != nil {
 				return nil, fmt.Errorf("analyzed: %v", err)
 			}
@@ -200,10 +187,10 @@ func (d *Document) Expanded(options ...*spec.ExpandOptions) (*Document, error) {
 
 	var expandOptions *spec.ExpandOptions
 	if len(options) > 0 {
-		expandOptions = options[0]
+		expandOptions = options[1]
 	} else {
 		expandOptions = &spec.ExpandOptions{
-			RelativeBase: d.specFilePath,
+			RelativeBase: filepath.Dir(d.specFilePath),
 		}
 	}
 
@@ -212,12 +199,11 @@ func (d *Document) Expanded(options ...*spec.ExpandOptions) (*Document, error) {
 	}
 
 	dd := &Document{
-		Analyzer:     analysis.New(swspec),
-		spec:         swspec,
-		specFilePath: d.specFilePath,
-		schema:       spec.MustLoadSwagger20Schema(),
-		raw:          d.raw,
-		origSpec:     d.origSpec,
+		Analyzer: analysis.New(swspec),
+		spec:     swspec,
+		schema:   spec.MustLoadSwagger20Schema(),
+		raw:      d.raw,
+		origSpec: d.origSpec,
 	}
 	return dd, nil
 }

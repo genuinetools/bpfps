@@ -44,6 +44,31 @@ var Opts = struct {
 	LogBuf:     os.Stderr,
 }
 
+// Cond is sync.Cond wrapper
+type Cond struct {
+	sync.Cond
+}
+
+// Locker is sync.Locker wrapper
+type Locker struct {
+	sync.Locker
+}
+
+// Once is sync.Once wrapper
+type Once struct {
+	sync.Once
+}
+
+// Pool is sync.Poll wrapper
+type Pool struct {
+	sync.Pool
+}
+
+// WaitGroup is sync.WaitGroup wrapper
+type WaitGroup struct {
+	sync.WaitGroup
+}
+
 // A Mutex is a drop-in replacement for sync.Mutex.
 // Performs deadlock detection unless disabled in Opts.
 type Mutex struct {
@@ -153,57 +178,57 @@ func lock(lockFn func(), ptr interface{}) {
 	} else {
 		ch := make(chan struct{})
 		go func() {
-			lockFn()
-			close(ch)
-		}()
-		for {
-			t := time.NewTimer(Opts.DeadlockTimeout)
-			defer t.Stop()
-			select {
-			case <-t.C:
-				lo.mu.Lock()
-				prev, ok := lo.cur[ptr]
-				if !ok {
-					lo.mu.Unlock()
-					break // Nobody seems to be holding the lock, try again.
-				}
-				Opts.mu.Lock()
-				fmt.Fprintln(Opts.LogBuf, header)
-				fmt.Fprintln(Opts.LogBuf, "Previous place where the lock was grabbed")
-				fmt.Fprintf(Opts.LogBuf, "goroutine %v lock %p\n", prev.gid, ptr)
-				printStack(Opts.LogBuf, prev.stack)
-				fmt.Fprintln(Opts.LogBuf, "Have been trying to lock it again for more than", Opts.DeadlockTimeout)
-				fmt.Fprintf(Opts.LogBuf, "goroutine %v lock %p\n", goid.Get(), ptr)
-				printStack(Opts.LogBuf, callers(2))
-				stacks := stacks()
-				grs := bytes.Split(stacks, []byte("\n\n"))
-				for _, g := range grs {
-					if goid.ExtractGID(g) == prev.gid {
-						fmt.Fprintln(Opts.LogBuf, "Here is what goroutine", prev.gid, "doing now")
-						Opts.LogBuf.Write(g)
-						fmt.Fprintln(Opts.LogBuf)
+			for {
+				t := time.NewTimer(Opts.DeadlockTimeout)
+				defer t.Stop() // This runs after the losure finishes, but it's OK.
+				select {
+				case <-t.C:
+					lo.mu.Lock()
+					prev, ok := lo.cur[ptr]
+					if !ok {
+						lo.mu.Unlock()
+						break // Nobody seems to be holding the lock, try again.
 					}
+					Opts.mu.Lock()
+					fmt.Fprintln(Opts.LogBuf, header)
+					fmt.Fprintln(Opts.LogBuf, "Previous place where the lock was grabbed")
+					fmt.Fprintf(Opts.LogBuf, "goroutine %v lock %p\n", prev.gid, ptr)
+					printStack(Opts.LogBuf, prev.stack)
+					fmt.Fprintln(Opts.LogBuf, "Have been trying to lock it again for more than", Opts.DeadlockTimeout)
+					fmt.Fprintf(Opts.LogBuf, "goroutine %v lock %p\n", goid.Get(), ptr)
+					printStack(Opts.LogBuf, callers(2))
+					stacks := stacks()
+					grs := bytes.Split(stacks, []byte("\n\n"))
+					for _, g := range grs {
+						if goid.ExtractGID(g) == prev.gid {
+							fmt.Fprintln(Opts.LogBuf, "Here is what goroutine", prev.gid, "doing now")
+							Opts.LogBuf.Write(g)
+							fmt.Fprintln(Opts.LogBuf)
+						}
+					}
+					lo.other(ptr)
+					if Opts.PrintAllCurrentGoroutines {
+						fmt.Fprintln(Opts.LogBuf, "All current goroutines:")
+						Opts.LogBuf.Write(stacks)
+					}
+					fmt.Fprintln(Opts.LogBuf)
+					if buf, ok := Opts.LogBuf.(*bufio.Writer); ok {
+						buf.Flush()
+					}
+					Opts.mu.Unlock()
+					lo.mu.Unlock()
+					Opts.OnPotentialDeadlock()
+					<-ch
+					return
+				case <-ch:
+					return
 				}
-				lo.other(ptr)
-				if Opts.PrintAllCurrentGoroutines {
-					fmt.Fprintln(Opts.LogBuf, "All current goroutines:")
-					Opts.LogBuf.Write(stacks)
-				}
-				fmt.Fprintln(Opts.LogBuf)
-				if buf, ok := Opts.LogBuf.(*bufio.Writer); ok {
-					buf.Flush()
-				}
-				Opts.mu.Unlock()
-				lo.mu.Unlock()
-				Opts.OnPotentialDeadlock()
-				<-ch
-				postLock(4, ptr)
-				return
-			case <-ch:
-				postLock(4, ptr)
-				return
 			}
-		}
+		}()
+		lockFn()
+		postLock(4, ptr)
+		close(ch)
+		return
 	}
 	postLock(4, ptr)
 }

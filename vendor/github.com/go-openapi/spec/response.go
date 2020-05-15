@@ -35,19 +35,15 @@ type ResponseProps struct {
 type Response struct {
 	Refable
 	ResponseProps
-	VendorExtensible
 }
 
 // JSONLookup look up a value by the json property name
-func (r Response) JSONLookup(token string) (interface{}, error) {
-	if ex, ok := r.Extensions[token]; ok {
-		return &ex, nil
-	}
+func (p Response) JSONLookup(token string) (interface{}, error) {
 	if token == "$ref" {
-		return &r.Ref, nil
+		return &p.Ref, nil
 	}
-	ptr, _, err := jsonpointer.GetForToken(r.ResponseProps, token)
-	return ptr, err
+	r, _, err := jsonpointer.GetForToken(p.ResponseProps, token)
+	return r, err
 }
 
 // UnmarshalJSON hydrates this items instance with the data from JSON
@@ -56,9 +52,6 @@ func (r *Response) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	if err := json.Unmarshal(data, &r.Refable); err != nil {
-		return err
-	}
-	if err := json.Unmarshal(data, &r.VendorExtensible); err != nil {
 		return err
 	}
 	return nil
@@ -74,11 +67,7 @@ func (r Response) MarshalJSON() ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	b3, err := json.Marshal(r.VendorExtensible)
-	if err != nil {
-		return nil, err
-	}
-	return swag.ConcatJSON(b1, b2, b3), nil
+	return swag.ConcatJSON(b1, b2), nil
 }
 
 // NewResponse creates a new response instance

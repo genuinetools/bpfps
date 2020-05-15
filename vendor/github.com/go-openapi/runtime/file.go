@@ -22,12 +22,6 @@ type File struct {
 	Header *multipart.FileHeader
 }
 
-// Read bytes from the file
-func (f *File) Read(p []byte) (n int, err error) {
+func (f File) Read(p []byte) (n int, err error) {
 	return f.Data.Read(p)
-}
-
-// Close the file
-func (f *File) Close() error {
-	return f.Data.Close()
 }

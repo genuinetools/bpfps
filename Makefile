@@ -2,7 +2,7 @@
 NAME := bpfps
 PKG := github.com/genuinetools/$(NAME)
 
-CGO_ENABLED := 0
+CGO_ENABLED := 1
 
 # Set any default go build tags.
 BUILDTAGS :=

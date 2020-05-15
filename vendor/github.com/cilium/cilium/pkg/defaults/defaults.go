@@ -15,6 +15,8 @@
 package defaults
 
 import (
+	"time"
+
 	"github.com/sirupsen/logrus"
 )
 
@@ -49,9 +51,15 @@ const (
 	// SockPathEnv is the environment variable to overwrite SockPath
 	SockPathEnv = "CILIUM_SOCK"
 
-	// MonitorSockPath is the path to the UNIX domain socket used to distribute events
-	// between multiple monitors.
-	MonitorSockPath = RuntimePath + "/monitor.sock"
+	// MonitorSockPath1_0 is the path to the UNIX domain socket used to
+	// distribute BPF and agent events to listeners.
+	// This is the 1.0 protocol version.
+	MonitorSockPath1_0 = RuntimePath + "/monitor.sock"
+
+	// MonitorSockPath1_2 is the path to the UNIX domain socket used to
+	// distribute BPF and agent events to listeners.
+	// This is the 1.2 protocol version.
+	MonitorSockPath1_2 = RuntimePath + "/monitor1_2.sock"
 
 	// PidFilePath is the path to the pid file for the agent.
 	PidFilePath = RuntimePath + "/cilium.pid"
@@ -76,4 +84,14 @@ const (
 
 	// DefaultMapPrefix is the default prefix for all BPF maps.
 	DefaultMapPrefix = "tc/globals"
+
+	// ToFQDNsMinTTL is the default lower bound for TTLs used with ToFQDNs rules.
+	ToFQDNsMinTTL = 3600 // 1 hour in seconds
+
+	// IdentityChangeGracePeriod is the grace period that needs to pass
+	// before an endpoint that has changed its identity will start using
+	// that new identity. During the grace period, the new identity has
+	// already been allocated and other nodes in the cluster have a chance
+	// to whitelist the new upcoming identity of the endpoint.
+	IdentityChangeGracePeriod = 25 * time.Second
 )

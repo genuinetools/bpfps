@@ -1,0 +1,140 @@
+# github.com/PuerkitoBio/purell v1.1.0
+github.com/PuerkitoBio/purell
+# github.com/PuerkitoBio/urlesc v0.0.0-20170810143723-de5bf2ad4578
+github.com/PuerkitoBio/urlesc
+# github.com/asaskevich/govalidator v0.0.0-20170104211126-fdf19785fd35
+github.com/asaskevich/govalidator
+# github.com/beorn7/perks v0.0.0-20180321164747-3a771d992973
+github.com/beorn7/perks/quantile
+# github.com/bmizerany/assert v0.0.0-20160611221934-b7ed37b82869
+## explicit
+# github.com/cilium/cilium v1.3.0 => ../../cilium/cilium
+## explicit
+github.com/cilium/cilium/api/v1/client
+github.com/cilium/cilium/api/v1/client/daemon
+github.com/cilium/cilium/api/v1/client/endpoint
+github.com/cilium/cilium/api/v1/client/ipam
+github.com/cilium/cilium/api/v1/client/metrics
+github.com/cilium/cilium/api/v1/client/policy
+github.com/cilium/cilium/api/v1/client/prefilter
+github.com/cilium/cilium/api/v1/client/service
+github.com/cilium/cilium/api/v1/health/client
+github.com/cilium/cilium/api/v1/health/client/connectivity
+github.com/cilium/cilium/api/v1/health/client/restapi
+github.com/cilium/cilium/api/v1/health/models
+github.com/cilium/cilium/api/v1/models
+github.com/cilium/cilium/common/types
+github.com/cilium/cilium/pkg/api
+github.com/cilium/cilium/pkg/bpf
+github.com/cilium/cilium/pkg/byteorder
+github.com/cilium/cilium/pkg/client
+github.com/cilium/cilium/pkg/comparator
+github.com/cilium/cilium/pkg/components
+github.com/cilium/cilium/pkg/controller
+github.com/cilium/cilium/pkg/defaults
+github.com/cilium/cilium/pkg/endpoint/id
+github.com/cilium/cilium/pkg/health/client
+github.com/cilium/cilium/pkg/health/defaults
+github.com/cilium/cilium/pkg/ip
+github.com/cilium/cilium/pkg/k8s/apis/cilium.io
+github.com/cilium/cilium/pkg/labels
+github.com/cilium/cilium/pkg/lock
+github.com/cilium/cilium/pkg/logging
+github.com/cilium/cilium/pkg/logging/logfields
+github.com/cilium/cilium/pkg/metrics
+github.com/cilium/cilium/pkg/mountinfo
+github.com/cilium/cilium/pkg/uuid
+# github.com/evalphobia/logrus_fluent v0.4.0
+github.com/evalphobia/logrus_fluent
+# github.com/fluent/fluent-logger-golang v1.3.0
+github.com/fluent/fluent-logger-golang/fluent
+# github.com/genuinetools/pkg v0.0.0-20181022210355-2fcf164d37cb
+## explicit
+github.com/genuinetools/pkg/cli
+# github.com/go-openapi/analysis v0.0.0-20161231055341-d5a75b7d751c
+github.com/go-openapi/analysis
+# github.com/go-openapi/errors v0.0.0-20170104180542-fc3f73a22449
+github.com/go-openapi/errors
+# github.com/go-openapi/jsonpointer v0.0.0-20180322222829-3a0015ad55fa
+github.com/go-openapi/jsonpointer
+# github.com/go-openapi/jsonreference v0.0.0-20180322222742-3fb327e6747d
+github.com/go-openapi/jsonreference
+# github.com/go-openapi/loads v0.0.0-20161225204854-bf98340e0473
+github.com/go-openapi/loads
+github.com/go-openapi/loads/fmts
+# github.com/go-openapi/runtime v0.0.0-20170901133030-bf2ff8f71507
+github.com/go-openapi/runtime
+github.com/go-openapi/runtime/client
+# github.com/go-openapi/spec v0.0.0-20170102180923-3a0434164aa3
+github.com/go-openapi/spec
+# github.com/go-openapi/strfmt v0.0.0-20170112235747-0cb3db44c13b
+github.com/go-openapi/strfmt
+# github.com/go-openapi/swag v0.0.0-20161226064331-96d7b9ebd181
+github.com/go-openapi/swag
+# github.com/go-openapi/validate v0.0.0-20161227051624-b11dbf889b64
+github.com/go-openapi/validate
+# github.com/golang/protobuf v1.2.0
+github.com/golang/protobuf/proto
+# github.com/konsorten/go-windows-terminal-sequences v1.0.1
+github.com/konsorten/go-windows-terminal-sequences
+# github.com/kr/pretty v0.0.0-20160823170715-cfb55aafdaf3
+github.com/kr/pretty
+# github.com/kr/text v0.1.0
+github.com/kr/text
+# github.com/mailru/easyjson v0.0.0-20180823135443-60711f1a8329
+github.com/mailru/easyjson/buffer
+github.com/mailru/easyjson/jlexer
+github.com/mailru/easyjson/jwriter
+# github.com/matttproud/golang_protobuf_extensions v1.0.1
+github.com/matttproud/golang_protobuf_extensions/pbutil
+# github.com/mitchellh/mapstructure v1.0.0
+github.com/mitchellh/mapstructure
+# github.com/pborman/uuid v0.0.0-20160208165331-14801136da12
+github.com/pborman/uuid
+# github.com/petermattis/goid v0.0.0-20180202154549-b0b1615b78e5
+github.com/petermattis/goid
+# github.com/philhofer/fwd v1.0.0
+github.com/philhofer/fwd
+# github.com/pmezard/go-difflib v1.0.0
+github.com/pmezard/go-difflib/difflib
+# github.com/prometheus/client_golang v0.9.0-pre1
+github.com/prometheus/client_golang/prometheus
+github.com/prometheus/client_golang/prometheus/promhttp
+# github.com/prometheus/client_model v0.0.0-20180712105110-5c3871d89910
+github.com/prometheus/client_model/go
+# github.com/prometheus/common v0.0.0-20180801064454-c7de2306084e
+github.com/prometheus/common/expfmt
+github.com/prometheus/common/internal/bitbucket.org/ww/goautoneg
+github.com/prometheus/common/model
+# github.com/prometheus/procfs v0.0.0-20180920065004-418d78d0b9a7
+github.com/prometheus/procfs
+github.com/prometheus/procfs/internal/util
+github.com/prometheus/procfs/nfs
+github.com/prometheus/procfs/xfs
+# github.com/sasha-s/go-deadlock v0.2.1-0.20190427202633-1595213edefa
+github.com/sasha-s/go-deadlock
+# github.com/sirupsen/logrus v1.4.2
+## explicit
+github.com/sirupsen/logrus
+github.com/sirupsen/logrus/hooks/syslog
+# github.com/spf13/pflag v0.0.0-20170130214245-9ff6c6923cff
+github.com/spf13/pflag
+# github.com/tinylib/msgp v1.0.2
+github.com/tinylib/msgp/msgp
+# golang.org/x/net v0.0.0-20180724234803-3673e40ba225
+golang.org/x/net/context
+golang.org/x/net/context/ctxhttp
+golang.org/x/net/idna
+# golang.org/x/sync v0.0.0-20200317015054-43a5402ce75a
+## explicit
+# golang.org/x/sys v0.0.0-20190422165155-953cdadca894
+golang.org/x/sys/unix
+# golang.org/x/text v0.3.0
+golang.org/x/text/secure/bidirule
+golang.org/x/text/transform
+golang.org/x/text/unicode/bidi
+golang.org/x/text/unicode/norm
+golang.org/x/text/width
+# gopkg.in/yaml.v2 v2.2.1
+gopkg.in/yaml.v2
+# github.com/cilium/cilium => ../../cilium/cilium
